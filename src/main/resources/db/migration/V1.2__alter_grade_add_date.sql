@@ -1,0 +1,3 @@
+ALTER TABLE GRADE
+    ADD COLUMN IF NOT EXISTS
+        created_at TIMESTAMP;

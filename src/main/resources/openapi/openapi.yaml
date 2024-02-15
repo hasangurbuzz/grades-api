@@ -1,0 +1,217 @@
+openapi: 3.0.3
+info:
+  title: grades-api
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /grades/create:
+    post:
+      tags:
+        - grade
+      summary: Create new grade
+      operationId: grade_create
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeCreateRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /grades/{id}:
+    get:
+      tags:
+        - grade
+      summary: Get detailed grade by id
+      operationId: grade_get
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Grade'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - grade
+      summary: Delete grade by id
+      operationId: grade_delete
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /grades/search:
+    post:
+      tags:
+        - grade
+      summary: Search grades
+      operationId: grade_search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeSearchRequest'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GradeSearchResponse'
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    GradeCreateRequest:
+      type: object
+      required:
+        - student
+        - point
+      properties:
+        student:
+          $ref: '#/components/schemas/Student'
+        point:
+          $ref: '#/components/schemas/PositiveFloat'
+
+    GradeSearchRequest:
+      type: object
+      properties:
+        pageRequest:
+          $ref: '#/components/schemas/PageRequest'
+        firstname:
+          type: string
+        lastname:
+          type: string
+
+    GradeSearchResponse:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Grade'
+    Student:
+      type: object
+      required:
+        - firstname
+        - lastname
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+
+    Grade:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        student:
+          $ref: '#/components/schemas/Student'
+        point:
+          $ref: '#/components/schemas/PositiveFloat'
+        detail:
+          $ref: '#/components/schemas/GradeDetail'
+
+    GradeDetail:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+
+    PageRequest:
+      type: object
+      properties:
+        start:
+          type: integer
+          default: 0
+          minimum: 0
+        limit:
+          type: integer
+          default: 20
+        order:
+          $ref: '#/components/schemas/SortOrder'
+
+    SortOrder:
+      type: object
+      properties:
+        direction:
+          $ref: '#/components/schemas/DirectionType'
+        sort:
+          $ref: '#/components/schemas/SortType'
+
+    PositiveFloat:
+      type: number
+      format: float
+      minimum: 0
+
+    DirectionType:
+      type: string
+      enum: [ASC, DESC]
+
+    SortType:
+      type: string
+      enum: [CREATED_AT, STUDENT_FIRSTNAME, STUDENT_LASTNAME, POINT]
+
+    Error:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/ErrorCode'
+        message:
+          type: string
+
+    ErrorCode:
+      type: string
+      enum: [INVALID_INPUT, NOT_FOUND, SERVER_ERROR]
+

@@ -1,0 +1,3 @@
+ALTER TABLE GRADE
+    ALTER COLUMN point
+          TYPE DECIMAL(4,1);

@@ -1,1 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB_NAME}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
 
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  servlet:
+    context-path: /api
+
+cors:
+  allowed: ${ALLOWED_ORIGINS}
